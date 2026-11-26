@@ -1,0 +1,44 @@
+<template>
+    <lightning-card title="Submit a Complaint" icon-name="standard:case">
+        <div class="slds-p-horizontal_medium">
+            <lightning-combobox
+                class="field"
+                name="category"
+                label="Category"
+                placeholder="Select a category"
+                options={categoryOptions}
+                value={category}
+                required
+                onchange={handleChange}>
+            </lightning-combobox>
+
+            <lightning-combobox
+                class="field"
+                name="orderId"
+                label="Order reference (optional)"
+                placeholder="Select an order"
+                options={orderOptions}
+                value={orderId}
+                onchange={handleChange}>
+            </lightning-combobox>
+
+            <lightning-textarea
+                class="field"
+                name="description"
+                label="Describe your issue"
+                value={description}
+                max-length="2000"
+                required
+                onchange={handleChange}>
+            </lightning-textarea>
+
+            <lightning-button
+                class="slds-m-top_small"
+                variant="brand"
+                label="Submit"
+                disabled={isSubmitting}
+                onclick={handleSubmit}>
+            </lightning-button>
+        </div>
+    </lightning-card>
+</template>
