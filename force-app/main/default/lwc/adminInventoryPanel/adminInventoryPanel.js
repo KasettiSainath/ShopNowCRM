@@ -85,7 +85,7 @@ export default class AdminInventoryPanel extends LightningElement {
 
         this.isSaving = true;
         try {
-            const count = await updateStock({ updates });
+            const count = await updateStock({ updatesJson: JSON.stringify(updates) });
             this.toast('Inventory updated', `${count} variant(s) saved.`, 'success');
             this.draftValues = [];
             await refreshApex(this.wiredResult);

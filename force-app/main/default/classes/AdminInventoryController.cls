@@ -18,32 +18,42 @@ public with sharing class AdminInventoryController {
     }
 
     // Imperative call: saves every edited row in one transaction
-    @AuraEnabled
-    public static Integer updateStock(List<StockUpdate> updates) {
+       @AuraEnabled
+    public static Integer updateStock(String updatesJson) {
+        List<StockUpdate> updates;
+        try {
+            updates = (List<StockUpdate>) JSON.deserialize(updatesJson, List<StockUpdate>.class);
+        } catch (Exception e) {
+            throw buildError('Could not read the update request: ' + e.getMessage());
+        }
         if (updates == null || updates.isEmpty()) {
             throw buildError('Nothing to update.');
         }
 
         List<Product_Variant__c> toUpdate = new List<Product_Variant__c>();
         for (StockUpdate u : updates) {
-            if (u.variantId == null || u.stock == null || u.stock < 0) {
-                throw buildError('Stock must be a number of 0 or more.');
+            if (u.variantId == null) {
+                throw buildError('A row is missing its record Id.');
+            }
+            if (u.stock == null) {
+                throw buildError('Stock value is missing for ' + u.variantId + '.');
+            }
+            if (u.stock < 0) {
+                throw buildError('Stock cannot be negative.');
             }
             toUpdate.add(new Product_Variant__c(Id = u.variantId, Stock__c = u.stock));
         }
 
-        // enforces field-level security: user must be able to edit Stock__c
         SObjectAccessDecision decision = Security.stripInaccessible(AccessType.UPDATABLE, toUpdate);
         List<Product_Variant__c> safeRows = (List<Product_Variant__c>) decision.getRecords();
 
         try {
             update safeRows;
         } catch (DmlException e) {
-            throw buildError(e.getDmlMessage(0));
+            throw buildError('Save failed: ' + e.getDmlMessage(0));
         }
         return safeRows.size();
     }
-
     private static AuraHandledException buildError(String message) {
         AuraHandledException ex = new AuraHandledException(message);
         ex.setMessage(message);
