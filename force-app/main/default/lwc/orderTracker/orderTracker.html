@@ -1,0 +1,57 @@
+<template>
+    <lightning-card title="Track Your Order" icon-name="standard:orders">
+        <div class="slds-p-around_medium">
+            <template lwc:if={showPicker}>
+                <lightning-combobox
+                    label="Select an order"
+                    placeholder="Choose order..."
+                    options={orderOptions}
+                    onchange={handleOrderChange}
+                ></lightning-combobox>
+            </template>
+
+            <template lwc:if={hasError}>
+                <p class="slds-text-color_error slds-m-top_small">{errorMessage}</p>
+            </template>
+
+            <template lwc:if={hasOrder}>
+                <div class="slds-m-vertical_medium">
+                    <p><strong>{order.Name}</strong> &middot; {order.Channel__c}</p>
+                    <p>
+                        Total: &#8377;
+                        <lightning-formatted-number value={order.Total_Amount__c}></lightning-formatted-number>
+                    </p>
+                </div>
+
+                <template lwc:if={isCancelled}>
+                    <div class="slds-box slds-theme_error">This order has been cancelled.</div>
+                </template>
+                <template lwc:else>
+                    <ul class="timeline">
+                        <template for:each={steps} for:item="step">
+                            <li key={step.label} class={step.cssClass}>
+                                <div class="marker">
+                                    <lightning-icon
+                                        icon-name={step.icon}
+                                        size="x-small"
+                                        variant="inverse"
+                                    ></lightning-icon>
+                                </div>
+                                <div class="content">
+                                    <p class="stage-title">{step.label}</p>
+                                    <p class="slds-text-body_small">{step.statusText}</p>
+                                    <template lwc:if={step.hasNote}>
+                                        <p class="slds-text-body_small note">{step.note}</p>
+                                    </template>
+                                    <template lwc:if={step.isCurrent}>
+                                        <lightning-badge label="Current stage"></lightning-badge>
+                                    </template>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

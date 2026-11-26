@@ -1,0 +1,60 @@
+CSS
+.timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.step {
+    position: relative;
+    display: flex;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+}
+
+.step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 1.1rem;
+    top: 2.2rem;
+    bottom: 0;
+    width: 2px;
+    background: #c9c9c9;
+}
+
+.step.done:not(:last-child)::before {
+    background: #2e844a;
+}
+
+.marker {
+    width: 2.2rem;
+    height: 2.2rem;
+    flex-shrink: 0;
+    z-index: 1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #c9c9c9;
+}
+
+.done .marker {
+    background: #2e844a;
+}
+
+.current .marker {
+    background: #0176d3;
+    box-shadow: 0 0 0 4px rgba(1, 118, 211, 0.25);
+}
+
+.stage-title {
+    font-weight: 600;
+}
+
+.pending .stage-title {
+    color: #747474;
+}
+
+.note {
+    color: #444;
+}
