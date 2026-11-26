@@ -1,0 +1,44 @@
+<template>
+    <lightning-card title="Inventory Management" icon-name="standard:product_item">
+        <div slot="actions">
+            <lightning-input
+                type="search"
+                variant="label-hidden"
+                label="Search"
+                placeholder="Search product, size, color"
+                onchange={handleSearch}>
+            </lightning-input>
+        </div>
+
+        <div class="slds-p-horizontal_medium">
+            <div class="slds-m-bottom_small">
+                <span class="slds-badge slds-theme_error">Below 10</span>
+                <span class="slds-badge slds-theme_warning">10 to 49</span>
+                <span class="slds-badge slds-theme_success">50 and above</span>
+            </div>
+
+            <template lwc:if={error}>
+                <p class="slds-text-color_error">{error}</p>
+            </template>
+
+            <template lwc:if={hasRows}>
+                <lightning-datatable
+                    key-field="Id"
+                    data={filteredRows}
+                    columns={columns}
+                    draft-values={draftValues}
+                    onsave={handleSave}
+                    hide-checkbox-column
+                    show-row-number-column>
+                </lightning-datatable>
+            </template>
+            <template lwc:else>
+                <p class="slds-text-color_weak">No variants found.</p>
+            </template>
+        </div>
+
+        <template lwc:if={isSaving}>
+            <lightning-spinner alternative-text="Saving" size="medium"></lightning-spinner>
+        </template>
+    </lightning-card>
+</template>
