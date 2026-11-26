@@ -1,0 +1,44 @@
+<template>
+    <lightning-card title="Shop" icon-name="standard:product">
+        <div slot="actions" class="slds-text-body_regular">
+            <lightning-icon icon-name="utility:cart" size="x-small"></lightning-icon>
+            {cartCount} items &middot;
+            <lightning-formatted-number
+                format-style="currency"
+                currency-code="INR"
+                value={cartTotal}>
+            </lightning-formatted-number>
+        </div>
+
+        <div class="slds-p-horizontal_medium">
+            <template lwc:if={hasError}>
+                <p class="slds-text-color_error">Could not load products.</p>
+            </template>
+
+            <template lwc:if={hasCart}>
+                <ul class="slds-m-bottom_medium">
+                    <template for:each={cartLines} for:item="line">
+                        <li key={line.variantId}>{line.label} &times; {line.quantity}</li>
+                    </template>
+                </ul>
+            </template>
+
+            <div class="slds-grid slds-wrap slds-gutters">
+                <template for:each={productList} for:item="p">
+                    <div key={p.Id} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-m-bottom_medium">
+                        <c-product-card
+                            product-id={p.Id}
+                            product-name={p.Name}
+                            description={p.Description}
+                            onaddtocart={handleAddToCart}>
+                        </c-product-card>
+                    </div>
+                </template>
+            </div>
+
+            <template lwc:if={showEmpty}>
+                <p class="slds-text-color_weak">No active products found.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

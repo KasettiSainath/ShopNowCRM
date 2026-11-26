@@ -1,0 +1,63 @@
+<template>
+    <article class="slds-card card">
+        <div class="slds-card__body slds-card__body_inner">
+            <h3 class="slds-text-heading_small slds-m-bottom_xx-small">{productName}</h3>
+            <p class="slds-text-body_small slds-m-bottom_small">{description}</p>
+
+            <template lwc:if={error}>
+                <p class="slds-text-color_error">{error}</p>
+            </template>
+            <template lwc:elseif={hasVariants}>
+                <template lwc:if={hasSizes}>
+                    <lightning-combobox
+                        label="Size"
+                        placeholder="Select size"
+                        value={selectedSize}
+                        options={sizeOptions}
+                        onchange={handleSizeChange}>
+                    </lightning-combobox>
+                </template>
+                <template lwc:if={hasColors}>
+                    <lightning-combobox
+                        label="Color"
+                        placeholder="Select color"
+                        value={selectedColor}
+                        options={colorOptions}
+                        onchange={handleColorChange}>
+                    </lightning-combobox>
+                </template>
+
+                <div class="slds-m-top_small">
+                    <template lwc:if={selectedVariant}>
+                        <p class="price">
+                            <lightning-formatted-number
+                                format-style="currency"
+                                currency-code="INR"
+                                value={price}>
+                            </lightning-formatted-number>
+                        </p>
+                        <p class={stockClass}>{stockText}</p>
+                    </template>
+                    <template lwc:elseif={noMatch}>
+                        <p class="slds-text-color_error">This combination is not available.</p>
+                    </template>
+                    <template lwc:else>
+                        <p class="slds-text-color_weak">Choose options to see price</p>
+                    </template>
+                </div>
+
+                <lightning-button
+                    class="slds-m-top_small"
+                    variant="brand"
+                    label="Add to Cart"
+                    icon-name="utility:cart"
+                    disabled={disableAdd}
+                    onclick={handleAddToCart}>
+                </lightning-button>
+            </template>
+            <template lwc:else>
+                <p class="slds-text-color_weak">No variants available.</p>
+            </template>
+        </div>
+    </article>
+</template>
