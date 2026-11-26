@@ -1,0 +1,107 @@
+<template>
+    <lightning-card title="Loyalty Rewards" icon-name="standard:promotions">
+        <div slot="actions">
+            <lightning-button-icon
+                icon-name="utility:refresh"
+                alternative-text="Refresh"
+                onclick={handleRefresh}>
+            </lightning-button-icon>
+        </div>
+
+        <div class="slds-p-horizontal_medium">
+            <template lwc:if={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+
+            <template lwc:if={error}>
+                <p class="slds-text-color_error">{error}</p>
+            </template>
+
+            <template lwc:if={showEmpty}>
+                <p class="slds-text-color_weak">No loyalty account found yet. Points are added after your first delivered order.</p>
+            </template>
+
+            <template lwc:if={hasData}>
+                <!-- header: tier badge + points -->
+                <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_medium">
+                    <div class="slds-col">
+                        <p class="slds-text-body_small">{customerName}</p>
+                        <span class={tierBadgeClass}>{tierName}</span>
+                    </div>
+                    <div class="slds-col slds-text-align_right">
+                        <p class="slds-text-body_small">Current points</p>
+                        <p class="points">{points}</p>
+                    </div>
+                </div>
+
+                <!-- progress bar -->
+                <div class="slds-m-bottom_medium">
+                    <div class="track">
+                        <div class="fill" style={barStyle}></div>
+                    </div>
+                    <div class="slds-grid slds-m-top_xx-small">
+                        <div class="slds-col slds-text-body_small">{progressMessage}</div>
+                        <template lwc:if={showRange}>
+                            <div class="slds-col slds-text-align_right slds-text-body_small">
+                                {progressFloor} / {progressCeiling} pts
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- stats -->
+                <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                    <div class="slds-col">
+                        <p class="slds-text-body_small">Total spent</p>
+                        <p class="stat">
+                            <lightning-formatted-number
+                                format-style="currency"
+                                currency-code="INR"
+                                value={totalSpent}>
+                            </lightning-formatted-number>
+                        </p>
+                    </div>
+                    <div class="slds-col">
+                        <p class="slds-text-body_small">Points expire on</p>
+                        <template lwc:if={hasExpiry}>
+                            <p class={expiryClass}>{expiryText}</p>
+                        </template>
+                        <template lwc:else>
+                            <p class="slds-text-color_weak">No expiry set</p>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- recent transactions -->
+                <h3 class="slds-text-heading_small slds-m-bottom_x-small">Recent transactions</h3>
+                <template lwc:if={hasTransactions}>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col">Date</th>
+                                <th scope="col">Order</th>
+                                <th scope="col">Type</th>
+                                <th scope="col" class="slds-text-align_right">Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={txnRows} for:item="row">
+                                <tr key={row.id}>
+                                    <td>{row.dateText}</td>
+                                    <td>{row.orderName}</td>
+                                    <td><span class={row.typeClass}>{row.type}</span></td>
+                                    <td class="slds-text-align_right">
+                                        <span class={row.pointsClass}>{row.pointsText}</span>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template lwc:else>
+                    <p class="slds-text-color_weak">No transactions yet.</p>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>
